@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -17,108 +18,146 @@ type Props = {
 export default function ExerciceCard({ exercice, onStart }: Props) {
   return (
     <View style={styles.card}>
-      
-      {/* TITLE */}
-      <Text style={styles.title}>{exercice.title}</Text>
-
-      {/* SUBTITLE */}
-      <Text style={styles.subtitle}>
-        Séance de respiration guidée
-      </Text>
-
-      {/* TIMINGS */}
-      <View style={styles.timings}>
-        <View style={styles.row}>
-          <Text style={styles.label}>Inspiration</Text>
-          <Text style={styles.value}>{exercice.inhale_seconds}s</Text>
+      {/* HEADER */}
+      <View style={styles.header}>
+        <View style={styles.titleRow}>
+          <Ionicons name="leaf-outline" size={18} color="#3B82F6" />
+          <Text style={styles.title}>{exercice.title}</Text>
         </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Rétention</Text>
-          <Text style={styles.value}>{exercice.hold_seconds}s</Text>
-        </View>
-
-        <View style={styles.row}>
-          <Text style={styles.label}>Expiration</Text>
-          <Text style={styles.value}>{exercice.exhale_seconds}s</Text>
-        </View>
+        <Text style={styles.subtitle}>
+          Séance guidée de respiration
+        </Text>
       </View>
 
-      {/* DIVIDER */}
-      <View style={styles.divider} />
+      {/* STATS */}
+      <View style={styles.stats}>
+        <Stat
+          icon="arrow-down"
+          label="Inspiration"
+          value={`${exercice.inhale_seconds}s`}
+        />
+        <Stat
+          icon="pause"
+          label="Rétention"
+          value={`${exercice.hold_seconds}s`}
+        />
+        <Stat
+          icon="arrow-up"
+          label="Expiration"
+          value={`${exercice.exhale_seconds}s`}
+        />
+      </View>
 
-      {/* BUTTON */}
+      {/* CTA */}
       <Pressable
-        style={styles.button}
+        style={({ pressed }) => [
+          styles.button,
+          pressed && { transform: [{ scale: 0.98 }], opacity: 0.9 },
+        ]}
         onPress={() => onStart(exercice)}
       >
+        <Ionicons name="play" size={16} color="#fff" />
         <Text style={styles.buttonText}>Commencer</Text>
       </Pressable>
-
     </View>
   );
 }
 
+/* SMALL STAT COMPONENT */
+function Stat({ icon, label, value }: any) {
+  return (
+    <View style={styles.statBox}>
+      <Ionicons name={icon} size={14} color="#94A3B8" />
+      <Text style={styles.statLabel}>{label}</Text>
+      <Text style={styles.statValue}>{value}</Text>
+    </View>
+  );
+}
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "rgba(255,255,255,0.9)",
+    backgroundColor: "#FFFFFF",
     borderRadius: 24,
-    padding: 20,
-    marginBottom: 16,
+    padding: 18,
+    marginBottom: 14,
+
+    borderWidth: 1,
+    borderColor: "#EEF2F7",
+
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
     elevation: 3,
+  },
+
+  header: {
+    marginBottom: 14,
+  },
+
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
 
   title: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#111827",
+    fontWeight: "800",
+    color: "#0F172A",
   },
 
   subtitle: {
-    fontSize: 12,
-    color: "#9ca3af",
     marginTop: 4,
+    fontSize: 12,
+    color: "#94A3B8",
   },
 
-  timings: {
-    marginTop: 16,
-    gap: 8,
-  },
-
-  row: {
+  stats: {
     flexDirection: "row",
     justifyContent: "space-between",
+    backgroundColor: "#F8FAFC",
+    padding: 12,
+    borderRadius: 16,
   },
 
-  label: {
+  statBox: {
+    flex: 1,
+    alignItems: "center",
+    gap: 3,
+  },
+
+  statLabel: {
+    fontSize: 10,
+    color: "#94A3B8",
+  },
+
+  statValue: {
     fontSize: 13,
-    color: "#6b7280",
-  },
-
-  value: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#111827",
-  },
-
-  divider: {
-    height: 1,
-    backgroundColor: "#e5e7eb",
-    marginVertical: 16,
+    fontWeight: "700",
+    color: "#0F172A",
   },
 
   button: {
-    backgroundColor: "#34d399",
+    marginTop: 14,
+    backgroundColor: "#3B82F6",
     paddingVertical: 12,
-    borderRadius: 999,
+    borderRadius: 16,
+
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
+    gap: 6,
+
+    shadowColor: "#3B82F6",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 2,
   },
 
   buttonText: {
-    fontWeight: "600",
-    color: "#000",
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "700",
   },
 });

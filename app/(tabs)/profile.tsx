@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -91,7 +92,7 @@ export default function ProfileScreen() {
     if (error) {
       Alert.alert("Erreur", "Impossible de sauvegarder");
     } else {
-      Alert.alert("Succès", "Profil mis à jour ✅");
+      Alert.alert("Succès", "Profil mis à jour");
     }
   };
 
@@ -99,7 +100,9 @@ export default function ProfileScreen() {
     return (
       <View style={styles.center}>
         <ActivityIndicator />
-        <Text style={{ marginTop: 10 }}>Chargement du profil...</Text>
+        <Text style={{ marginTop: 10, color: "#64748B" }}>
+          Chargement du profil...
+        </Text>
       </View>
     );
   }
@@ -107,47 +110,82 @@ export default function ProfileScreen() {
   if (!user) return null;
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Mon profil</Text>
-
-      <View style={styles.emailBox}>
-        <Text>📧 {user.email}</Text>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* HEADER */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Mon profil</Text>
+        <Text style={styles.subtitle}>
+          Gérez vos informations personnelles
+        </Text>
       </View>
 
-      <TextInput
-        placeholder="Prénom"
-        value={firstName}
-        onChangeText={setFirstName}
-        style={styles.input}
-      />
+      {/* EMAIL CARD */}
+      <View style={styles.card}>
+        <Text style={styles.cardLabel}>Email</Text>
+        <Text style={styles.email}>{user.email}</Text>
+      </View>
 
-      <TextInput
-        placeholder="Nom"
-        value={lastName}
-        onChangeText={setLastName}
-        style={styles.input}
-      />
+      {/* FORM CARD */}
+      <View style={styles.card}>
+        <Input
+          label="Prénom"
+          value={firstName}
+          onChangeText={setFirstName}
+        />
 
-      <TextInput
-        placeholder="Date de naissance (YYYY-MM-DD)"
-        value={birthday}
-        onChangeText={setBirthday}
-        style={styles.input}
-      />
+        <Input
+          label="Nom"
+          value={lastName}
+          onChangeText={setLastName}
+        />
 
-      <Text style={styles.saveButton} onPress={saveProfile}>
-        {saving ? "Enregistrement..." : "Enregistrer"}
-      </Text>
+        <Input
+          label="Date de naissance"
+          value={birthday}
+          onChangeText={setBirthday}
+          placeholder="YYYY-MM-DD"
+        />
 
-      <LogoutButton />
+        {/* SAVE BUTTON */}
+        <Pressable
+          style={({ pressed }) => [
+            styles.saveButton,
+            pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] },
+          ]}
+          onPress={saveProfile}
+        >
+          <Text style={styles.saveText}>
+            {saving ? "Enregistrement..." : "Sauvegarder"}
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* LOGOUT */}
+      <View style={styles.logout}>
+        <LogoutButton />
+      </View>
     </ScrollView>
   );
 }
 
+/* INPUT COMPONENT */
+function Input({ label, ...props }: any) {
+  return (
+    <View style={{ marginBottom: 12 }}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={styles.input}
+        placeholderTextColor="#94A3B8"
+        {...props}
+      />
+    </View>
+  );
+}
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: "#fff",
+    flex: 1,
+    backgroundColor: "#F6F7FB",
+    paddingHorizontal: 20,
   },
 
   center: {
@@ -156,35 +194,87 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-    marginBottom: 20,
-    textAlign: "center",
+  header: {
+    marginTop: 20,
+    marginBottom: 18,
   },
 
-  emailBox: {
-    backgroundColor: "#f3f4f6",
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 20,
+  title: {
+    fontSize: 26,
+    fontWeight: "800",
+    color: "#0F172A",
+  },
+
+  subtitle: {
+    fontSize: 13,
+    color: "#64748B",
+    marginTop: 4,
+  },
+
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 22,
+    padding: 16,
+    marginBottom: 14,
+
+    borderWidth: 1,
+    borderColor: "#EEF2F7",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 14,
+    elevation: 2,
+  },
+
+  cardLabel: {
+    fontSize: 12,
+    color: "#94A3B8",
+    marginBottom: 4,
+  },
+
+  email: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#0F172A",
+  },
+
+  label: {
+    fontSize: 12,
+    color: "#64748B",
+    marginBottom: 6,
   },
 
   input: {
+    backgroundColor: "#F8FAFC",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "#E2E8F0",
+    borderRadius: 14,
     padding: 12,
-    borderRadius: 10,
-    marginBottom: 12,
+    fontSize: 14,
+    color: "#0F172A",
   },
 
   saveButton: {
     marginTop: 10,
-    backgroundColor: "#000",
+    backgroundColor: "#3B82F6",
+    paddingVertical: 12,
+    borderRadius: 14,
+    alignItems: "center",
+
+    shadowColor: "#3B82F6",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+
+  saveText: {
     color: "#fff",
-    textAlign: "center",
-    padding: 14,
-    borderRadius: 12,
-    fontWeight: "600",
+    fontWeight: "700",
+    fontSize: 14,
+  },
+
+  logout: {
+    marginTop: 10,
+    marginBottom: 30,
   },
 });

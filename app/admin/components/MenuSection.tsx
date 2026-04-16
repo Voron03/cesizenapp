@@ -10,13 +10,13 @@ export default function MenuSection({
   if (loading) {
     return (
       <View style={styles.center}>
-        <Text>Chargement...</Text>
+        <Text style={{ color: "#64748B" }}>Chargement...</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View>
       {/* HEADER */}
       <View style={styles.header}>
         <View>
@@ -26,13 +26,21 @@ export default function MenuSection({
           </Text>
         </View>
 
-        <Text style={styles.count}>
-          Total: {menu?.length || 0}
-        </Text>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>
+            {menu?.length || 0}
+          </Text>
+        </View>
       </View>
 
       {/* ADD BUTTON */}
-      <Pressable onPress={createMenu} style={styles.addBtn}>
+      <Pressable
+        onPress={createMenu}
+        style={({ pressed }) => [
+          styles.addBtn,
+          pressed && { opacity: 0.8, transform: [{ scale: 0.98 }] },
+        ]}
+      >
         <Text style={styles.addText}>+ Nouveau menu</Text>
       </Pressable>
 
@@ -47,20 +55,25 @@ export default function MenuSection({
             <View style={styles.left}>
               <View style={styles.icon}>
                 <Text style={styles.iconText}>
-                  {m.title?.charAt(0).toUpperCase()}
+                  {m.title?.charAt(0).toUpperCase() || "?"}
                 </Text>
               </View>
 
               <View>
                 <Text style={styles.menuTitle}>{m.title}</Text>
-                <Text style={styles.menuId}>ID: {m.id_menu}</Text>
+                <Text style={styles.menuId}>
+                  ID: {m.id_menu}
+                </Text>
               </View>
             </View>
 
             {/* DELETE */}
             <Pressable
               onPress={() => deleteMenu(m.id_menu)}
-              style={styles.deleteBtn}
+              style={({ pressed }) => [
+                styles.deleteBtn,
+                pressed && { opacity: 0.7 },
+              ]}
             >
               <Text style={styles.deleteText}>Delete</Text>
             </Pressable>
@@ -70,12 +83,7 @@ export default function MenuSection({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-
   center: {
     padding: 20,
     alignItems: "center",
@@ -84,47 +92,72 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 12,
-    alignItems: "flex-end",
+    alignItems: "flex-start",
+    marginBottom: 14,
   },
 
   title: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#0F172A",
   },
 
   subtitle: {
-    fontSize: 12,
-    color: "#6b7280",
+    fontSize: 11,
+    color: "#64748B",
+    marginTop: 3,
   },
 
-  count: {
-    fontSize: 12,
-    color: "#9ca3af",
+  badge: {
+    backgroundColor: "#EEF2FF",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#E0E7FF",
+  },
+
+  badgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#4F46E5",
   },
 
   addBtn: {
-    backgroundColor: "#111",
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 12,
+    backgroundColor: "#3B82F6",
+    paddingVertical: 12,
+    borderRadius: 14,
     alignItems: "center",
+    marginBottom: 12,
+
+    shadowColor: "#3B82F6",
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 3,
   },
 
   addText: {
     color: "#fff",
-    fontWeight: "600",
+    fontWeight: "800",
+    fontSize: 13,
   },
 
   card: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 12,
-    borderRadius: 16,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#f3f4f6",
     alignItems: "center",
+
+    padding: 14,
+    borderRadius: 16,
+    backgroundColor: "#FFFFFF",
+
+    borderWidth: 1,
+    borderColor: "#EEF2F7",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    elevation: 1,
   },
 
   left: {
@@ -134,39 +167,44 @@ const styles = StyleSheet.create({
   },
 
   icon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: "#3b82f6",
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: "#3B82F6",
     justifyContent: "center",
     alignItems: "center",
   },
 
   iconText: {
     color: "#fff",
-    fontWeight: "700",
+    fontWeight: "800",
+    fontSize: 14,
   },
 
   menuTitle: {
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#0F172A",
   },
 
   menuId: {
     fontSize: 10,
-    color: "#9ca3af",
+    color: "#94A3B8",
+    marginTop: 2,
   },
 
   deleteBtn: {
-    backgroundColor: "#ef4444",
+    backgroundColor: "#FEE2E2",
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#FECACA",
   },
 
   deleteText: {
-    color: "#fff",
+    color: "#EF4444",
     fontSize: 11,
-    fontWeight: "600",
+    fontWeight: "700",
   },
 });

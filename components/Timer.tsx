@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, Text, View } from "react-native";
 
@@ -16,65 +17,93 @@ type Props = {
 
 export default function Timer({ exercice, phase, timeLeft }: Props) {
   const scale = useRef(new Animated.Value(1)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
 
-  const getTargetScale = () => {
-    if (phase === "inhale") return 1.3;
-    if (phase === "hold") return 1.3;
-    if (phase === "exhale") return 1;
-    return 1;
+  const getConfig = () => {
+    switch (phase) {
+      case "inhale":
+        return {
+          scale: 1.35,
+          color: "#3B82F6",
+          icon: "arrow-down-circle",
+          label: "Inspire",
+        };
+      case "hold":
+        return {
+          scale: 1.25,
+          color: "#8B5CF6",
+          icon: "pause-circle",
+          label: "Retiens",
+        };
+      case "exhale":
+        return {
+          scale: 1,
+          color: "#22C55E",
+          icon: "arrow-up-circle",
+          label: "Expire",
+        };
+      default:
+        return {
+          scale: 1,
+          color: "#94A3B8",
+          icon: "ellipse-outline",
+          label: "Prêt",
+        };
+    }
   };
 
-  const getColor = () => {
-    if (phase === "inhale") return "#60a5fa"; // blue
-    if (phase === "hold") return "#a78bfa"; // purple
-    if (phase === "exhale") return "#34d399"; // green
-    return "#9ca3af";
-  };
+  const config = getConfig();
 
   useEffect(() => {
-    Animated.timing(scale, {
-      toValue: getTargetScale(),
-      duration: 900,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.spring(scale, {
+        toValue: config.scale,
+        useNativeDriver: true,
+        friction: 6,
+        tension: 60,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
   }, [phase]);
 
   return (
     <View style={styles.container}>
-      
       {/* TITLE */}
       <Text style={styles.title}>{exercice.title}</Text>
 
-      {/* CIRCLE */}
-      <View style={styles.circleWrapper}>
-        
+      {/* CARD */}
+      <View style={styles.card}>
         <Animated.View
           style={[
             styles.circle,
             {
-              backgroundColor: getColor(),
               transform: [{ scale }],
+              backgroundColor: config.color,
+              opacity,
             },
           ]}
         />
 
-        {/* TEXT OVERLAY */}
-        <View style={styles.centerText}>
-          <Text style={styles.phase}>
-            {phase}
-          </Text>
+        {/* CENTER CONTENT */}
+        <View style={styles.center}>
+          <Ionicons
+            name={config.icon as any}
+            size={22}
+            color="#fff"
+          />
 
-          <Text style={styles.time}>
-            {timeLeft}
-          </Text>
+          <Text style={styles.phase}>{config.label}</Text>
+
+          <Text style={styles.time}>{timeLeft}s</Text>
         </View>
-
       </View>
-
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
@@ -82,39 +111,53 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "700",
-    marginBottom: 20,
+    color: "#0F172A",
+    marginBottom: 16,
   },
 
-  circleWrapper: {
-    width: 160,
-    height: 160,
+  card: {
+    width: 190,
+    height: 190,
     alignItems: "center",
     justifyContent: "center",
+
+    backgroundColor: "#FFFFFF",
+    borderRadius: 999,
+
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 5,
   },
 
   circle: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    position: "absolute",
+    width: 150,
+    height: 150,
+    borderRadius: 999,
+    opacity: 0.9,
   },
 
-  centerText: {
+  center: {
     position: "absolute",
     alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
   },
 
   phase: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "600",
-    color: "#fff",
+    color: "#FFFFFF",
     textTransform: "capitalize",
   },
 
   time: {
-    fontSize: 34,
-    fontWeight: "bold",
-    color: "#fff",
+    fontSize: 28,
+    fontWeight: "800",
+    color: "#FFFFFF",
   },
 });

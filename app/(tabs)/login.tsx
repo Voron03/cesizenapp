@@ -37,90 +37,161 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bon retour 👋</Text>
-      <Text style={styles.subtitle}>
-        Connectez-vous à votre espace CESIZen
-      </Text>
-
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        autoCapitalize="none"
-      />
-
-      <TextInput
-        placeholder="Mot de passe"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        secureTextEntry
-      />
-
-      <Pressable style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>
-          {loading ? "Connexion..." : "Se connecter"}
+      {/* HEADER */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Bon retour 👋</Text>
+        <Text style={styles.subtitle}>
+          Connectez-vous à votre espace CESIZen
         </Text>
-      </Pressable>
+      </View>
 
-      <Pressable onPress={() => router.push("/signup")}>
-        <Text style={styles.link}>Pas de compte ? S'inscrire</Text>
-      </Pressable>
+      {/* CARD */}
+      <View style={styles.card}>
+        <Input
+          label="Email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+        />
 
-      <Pressable onPress={() => router.push("/forgot-password")}>
-        <Text style={styles.link}>Mot de passe oublié ?</Text>
-      </Pressable>
+        <Input
+          label="Mot de passe"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        {/* BUTTON */}
+        <Pressable
+          style={({ pressed }) => [
+            styles.button,
+            pressed && { transform: [{ scale: 0.98 }], opacity: 0.9 },
+          ]}
+          onPress={handleLogin}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? "Connexion..." : "Se connecter"}
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* LINKS */}
+      <View style={styles.links}>
+        <Pressable onPress={() => router.push("/signup")}>
+          <Text style={styles.link}>Créer un compte</Text>
+        </Pressable>
+
+        <Pressable onPress={() => router.push("/forgot-password")}>
+          <Text style={styles.linkMuted}>Mot de passe oublié ?</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
 
+/* INPUT COMPONENT */
+function Input({ label, ...props }: any) {
+  return (
+    <View style={{ marginBottom: 12 }}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={styles.input}
+        placeholderTextColor="#94A3B8"
+        {...props}
+      />
+    </View>
+  );
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
+    backgroundColor: "#F6F7FB",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+  },
+
+  header: {
+    marginBottom: 18,
+    alignItems: "center",
   },
 
   title: {
-    fontSize: 28,
-    fontWeight: "700",
-    textAlign: "center",
-    marginBottom: 6,
+    fontSize: 26,
+    fontWeight: "800",
+    color: "#0F172A",
   },
 
   subtitle: {
     fontSize: 13,
+    color: "#64748B",
+    marginTop: 6,
     textAlign: "center",
-    color: "#6b7280",
-    marginBottom: 30,
+  },
+
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 22,
+    padding: 18,
+
+    borderWidth: 1,
+    borderColor: "#EEF2F7",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 4,
+  },
+
+  label: {
+    fontSize: 12,
+    color: "#64748B",
+    marginBottom: 6,
   },
 
   input: {
+    backgroundColor: "#F8FAFC",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "#E2E8F0",
+    borderRadius: 14,
     padding: 12,
-    borderRadius: 10,
-    marginBottom: 12,
+    fontSize: 14,
+    color: "#0F172A",
   },
 
   button: {
-    backgroundColor: "#000",
-    padding: 14,
-    borderRadius: 12,
-    alignItems: "center",
     marginTop: 10,
+    backgroundColor: "#3B82F6",
+    paddingVertical: 12,
+    borderRadius: 14,
+    alignItems: "center",
+
+    shadowColor: "#3B82F6",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 3,
   },
 
   buttonText: {
     color: "#fff",
-    fontWeight: "600",
+    fontWeight: "700",
+    fontSize: 14,
+  },
+
+  links: {
+    marginTop: 18,
+    alignItems: "center",
+    gap: 10,
   },
 
   link: {
-    marginTop: 15,
-    textAlign: "center",
-    color: "#6b7280",
+    color: "#3B82F6",
+    fontWeight: "600",
+    fontSize: 13,
+  },
+
+  linkMuted: {
+    color: "#94A3B8",
+    fontSize: 12,
   },
 });

@@ -38,16 +38,14 @@ export default function SignUpScreen() {
           data: {
             first_name: firstName,
             last_name: lastName,
-            birthday: birthday,
+            birthday,
           },
         },
       });
 
       if (error) throw error;
 
-      if (!data.user) {
-        throw new Error("User not created");
-      }
+      if (!data.user) throw new Error("User not created");
 
       Alert.alert(
         "Compte créé",
@@ -64,119 +62,187 @@ export default function SignUpScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
+      {/* HEADER */}
+      <View style={styles.header}>
         <Text style={styles.title}>Créer un compte</Text>
+        <Text style={styles.subtitle}>
+          Rejoignez CESIZen et commencez votre parcours de calme intérieur
+        </Text>
+      </View>
 
-        <TextInput
-          placeholder="Prénom"
+      {/* CARD */}
+      <View style={styles.card}>
+        {/* IDENTITY SECTION */}
+        <SectionTitle title="Identité" />
+
+        <Input
+          label="Prénom"
           value={firstName}
           onChangeText={setFirstName}
-          style={styles.input}
         />
 
-        <TextInput
-          placeholder="Nom"
+        <Input
+          label="Nom"
           value={lastName}
           onChangeText={setLastName}
-          style={styles.input}
         />
 
-        <TextInput
-          placeholder="Date de naissance (YYYY-MM-DD)"
+        <Input
+          label="Date de naissance"
           value={birthday}
           onChangeText={setBirthday}
-          style={styles.input}
+          placeholder="YYYY-MM-DD"
         />
 
-        <TextInput
-          placeholder="Email"
+        {/* ACCOUNT SECTION */}
+        <SectionTitle title="Compte" />
+
+        <Input
+          label="Email"
           value={email}
           onChangeText={setEmail}
-          style={styles.input}
           autoCapitalize="none"
         />
 
-        <TextInput
-          placeholder="Password"
+        <Input
+          label="Mot de passe"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          style={styles.input}
         />
 
+        {/* CTA */}
         <Pressable
-          style={styles.button}
+          style={({ pressed }) => [
+            styles.button,
+            pressed && { transform: [{ scale: 0.98 }], opacity: 0.9 },
+          ]}
           onPress={handleSignUp}
           disabled={loading}
         >
           <Text style={styles.buttonText}>
-            {loading ? "Création..." : "S'inscrire"}
-          </Text>
-        </Pressable>
-
-        <Pressable onPress={() => router.push("/login")}>
-          <Text style={styles.link}>
-            Déjà un compte ? Se connecter
+            {loading ? "Création..." : "Créer mon compte"}
           </Text>
         </Pressable>
       </View>
+
+      {/* LINK */}
+      <Pressable onPress={() => router.push("/login")}>
+        <Text style={styles.link}>
+          Déjà un compte ? Se connecter
+        </Text>
+      </Pressable>
     </View>
   );
 }
 
-/* 🎨 STYLES */
+/* INPUT */
+function Input({ label, ...props }: any) {
+  return (
+    <View style={{ marginBottom: 12 }}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={styles.input}
+        placeholderTextColor="#94A3B8"
+        {...props}
+      />
+    </View>
+  );
+}
+
+/* SECTION TITLE */
+function SectionTitle({ title }: any) {
+  return (
+    <Text style={styles.sectionTitle}>{title}</Text>
+  );
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F6F7FB",
     justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
+    paddingHorizontal: 20,
   },
 
-  card: {
-    width: "100%",
-    maxWidth: 360,
-    padding: 20,
-    borderRadius: 20,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+  header: {
+    marginBottom: 18,
   },
 
   title: {
-    fontSize: 24,
+    fontSize: 26,
+    fontWeight: "800",
+    color: "#0F172A",
+  },
+
+  subtitle: {
+    marginTop: 6,
+    fontSize: 13,
+    color: "#64748B",
+  },
+
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 22,
+    padding: 18,
+
+    borderWidth: 1,
+    borderColor: "#EEF2F7",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 4,
+  },
+
+  sectionTitle: {
+    fontSize: 12,
     fontWeight: "700",
-    textAlign: "center",
-    marginBottom: 20,
+    color: "#3B82F6",
+    marginTop: 10,
+    marginBottom: 8,
+    textTransform: "uppercase",
+  },
+
+  label: {
+    fontSize: 12,
+    color: "#64748B",
+    marginBottom: 6,
   },
 
   input: {
+    backgroundColor: "#F8FAFC",
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "#E2E8F0",
+    borderRadius: 14,
     padding: 12,
-    borderRadius: 10,
-    marginBottom: 12,
+    fontSize: 14,
+    color: "#0F172A",
   },
 
   button: {
-    backgroundColor: "#3b82f6",
-    padding: 14,
-    borderRadius: 12,
+    marginTop: 14,
+    backgroundColor: "#3B82F6",
+    paddingVertical: 14,
+    borderRadius: 16,
     alignItems: "center",
-    marginTop: 10,
+
+    shadowColor: "#3B82F6",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 3,
   },
 
   buttonText: {
     color: "#fff",
-    fontWeight: "600",
+    fontWeight: "800",
+    fontSize: 14,
   },
 
   link: {
-    marginTop: 15,
+    marginTop: 16,
     textAlign: "center",
-    color: "#6b7280",
+    color: "#3B82F6",
+    fontWeight: "600",
   },
 });

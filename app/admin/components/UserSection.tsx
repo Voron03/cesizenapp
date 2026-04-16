@@ -10,13 +10,13 @@ export default function UsersSection({
   if (loading) {
     return (
       <View style={styles.center}>
-        <Text>Chargement...</Text>
+        <Text style={{ color: "#64748B" }}>Chargement...</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View>
       {/* HEADER */}
       <View style={styles.header}>
         <View>
@@ -26,9 +26,11 @@ export default function UsersSection({
           </Text>
         </View>
 
-        <Text style={styles.count}>
-          Total: {users?.length || 0}
-        </Text>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>
+            {users?.length || 0}
+          </Text>
+        </View>
       </View>
 
       {/* LIST */}
@@ -38,31 +40,43 @@ export default function UsersSection({
         contentContainerStyle={{ gap: 10 }}
         renderItem={({ item: u }) => (
           <View style={styles.card}>
+            
             {/* LEFT */}
             <View style={styles.left}>
+              {/* AVATAR */}
               <View style={styles.avatar}>
                 <Text style={styles.avatarText}>
-                  {u.email?.charAt(0).toUpperCase()}
+                  {(u.first_name?.charAt(0) ||
+                    u.email?.charAt(0) ||
+                    "?").toUpperCase()}
                 </Text>
               </View>
 
+              {/* INFO */}
               <View>
-                <Text style={styles.id}>ID: {u.first_name} {u.last_name}</Text>
+                <Text style={styles.name}>
+                  {u.first_name || u.email}
+                </Text>
 
+                <Text style={styles.email}>
+                  {u.email}
+                </Text>
               </View>
             </View>
 
             {/* RIGHT */}
             <View style={styles.right}>
+              
+              {/* STATUS */}
               <View
                 style={[
-                  styles.badge,
+                  styles.status,
                   u.is_active ? styles.active : styles.disabled,
                 ]}
               >
                 <Text
                   style={[
-                    styles.badgeText,
+                    styles.statusText,
                     u.is_active ? styles.activeText : styles.disabledText,
                   ]}
                 >
@@ -70,24 +84,29 @@ export default function UsersSection({
                 </Text>
               </View>
 
-              <Pressable
-                onPress={() => toggleUser(u.id, u.is_active)}
-                style={[
-                  styles.btn,
-                  u.is_active ? styles.btnGray : styles.btnGreen,
-                ]}
-              >
-                <Text style={styles.btnText}>
-                  {u.is_active ? "Disable" : "Enable"}
-                </Text>
-              </Pressable>
+              {/* ACTIONS */}
+              <View style={styles.actions}>
+                <Pressable
+                  onPress={() => toggleUser(u.id, u.is_active)}
+                  style={[
+                    styles.actionBtn,
+                    u.is_active
+                      ? styles.disableBtn
+                      : styles.enableBtn,
+                  ]}
+                >
+                  <Text style={styles.actionText}>
+                    {u.is_active ? "Disable" : "Enable"}
+                  </Text>
+                </Pressable>
 
-              <Pressable
-                onPress={() => deleteUser(u.id)}
-                style={[styles.btn, styles.btnRed]}
-              >
-                <Text style={styles.btnText}>Delete</Text>
-              </Pressable>
+                <Pressable
+                  onPress={() => deleteUser(u.id)}
+                  style={[styles.actionBtn, styles.deleteBtn]}
+                >
+                  <Text style={styles.actionText}>Delete</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
         )}
@@ -95,12 +114,7 @@ export default function UsersSection({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-
   center: {
     padding: 20,
     alignItems: "center",
@@ -109,87 +123,112 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 16,
-    alignItems: "flex-end",
+    alignItems: "flex-start",
+    marginBottom: 14,
   },
 
   title: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#0F172A",
   },
 
   subtitle: {
-    fontSize: 12,
-    color: "#6b7280",
+    fontSize: 11,
+    color: "#64748B",
+    marginTop: 3,
   },
 
-  count: {
-    fontSize: 12,
-    color: "#9ca3af",
+  badge: {
+    backgroundColor: "#EEF2FF",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#E0E7FF",
+  },
+
+  badgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#4F46E5",
   },
 
   card: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 12,
+    alignItems: "center",
+
+    padding: 14,
     borderRadius: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
+
     borderWidth: 1,
-    borderColor: "#f3f4f6",
+    borderColor: "#EEF2F7",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    elevation: 1,
   },
 
   left: {
     flexDirection: "row",
-    gap: 10,
     alignItems: "center",
+    gap: 10,
   },
 
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#10b981",
+    backgroundColor: "#3B82F6",
     justifyContent: "center",
     alignItems: "center",
   },
 
   avatarText: {
     color: "#fff",
+    fontWeight: "800",
+  },
+
+  name: {
+    fontSize: 13,
     fontWeight: "700",
+    color: "#0F172A",
   },
 
   email: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-
-  id: {
-    fontSize: 10,
-    color: "#9ca3af",
+    fontSize: 11,
+    color: "#64748B",
+    marginTop: 2,
   },
 
   right: {
-    gap: 6,
     alignItems: "flex-end",
+    gap: 8,
   },
 
-  badge: {
+  status: {
     paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 20,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
   },
 
   active: {
-    backgroundColor: "#d1fae5",
+    backgroundColor: "#ECFDF5",
+    borderColor: "#A7F3D0",
   },
 
   disabled: {
-    backgroundColor: "#fee2e2",
+    backgroundColor: "#FEF2F2",
+    borderColor: "#FECACA",
   },
 
-  badgeText: {
+  statusText: {
     fontSize: 10,
-    fontWeight: "600",
+    fontWeight: "700",
   },
 
   activeText: {
@@ -197,30 +236,35 @@ const styles = StyleSheet.create({
   },
 
   disabledText: {
-    color: "#ef4444",
+    color: "#EF4444",
   },
 
-  btn: {
+  actions: {
+    flexDirection: "row",
+    gap: 6,
+  },
+
+  actionBtn: {
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 10,
   },
 
-  btnGreen: {
-    backgroundColor: "#10b981",
+  enableBtn: {
+    backgroundColor: "#10B981",
   },
 
-  btnGray: {
-    backgroundColor: "#6b7280",
+  disableBtn: {
+    backgroundColor: "#6B7280",
   },
 
-  btnRed: {
-    backgroundColor: "#ef4444",
+  deleteBtn: {
+    backgroundColor: "#F43F5E",
   },
 
-  btnText: {
+  actionText: {
     color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
+    fontSize: 11,
+    fontWeight: "700",
   },
 });
