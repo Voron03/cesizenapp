@@ -15,39 +15,78 @@ export default function SignUpScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [birthday, setBirthday] = useState("");
+
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
-    setLoading(true);
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    setLoading(false);
-
-    if (error) {
-      Alert.alert("Erreur", error.message);
+    if (!email || !password || !firstName || !lastName || !birthday) {
+      Alert.alert("Erreur", "Veuillez remplir tous les champs");
       return;
     }
 
-    Alert.alert(
-      "Compte créé",
-      "Vérifie ton email pour confirmer ton compte"
-    );
+    setLoading(true);
 
-    router.replace("/login");
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            birthday: birthday,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      if (!data.user) {
+        throw new Error("User not created");
+      }
+
+      Alert.alert(
+        "Compte créé",
+        "Vérifie ton email pour confirmer ton compte"
+      );
+
+      router.replace("/login");
+    } catch (err: any) {
+      Alert.alert("Erreur", err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* glow effects (mobile version) */}
-      <View style={styles.glowTop} />
-      <View style={styles.glowBottom} />
-
       <View style={styles.card}>
-        <Text style={styles.title}>Sign Up</Text>
+        <Text style={styles.title}>Créer un compte</Text>
+
+        <TextInput
+          placeholder="Prénom"
+          value={firstName}
+          onChangeText={setFirstName}
+          style={styles.input}
+        />
+
+        <TextInput
+          placeholder="Nom"
+          value={lastName}
+          onChangeText={setLastName}
+          style={styles.input}
+        />
+
+        <TextInput
+          placeholder="Date de naissance (YYYY-MM-DD)"
+          value={birthday}
+          onChangeText={setBirthday}
+          style={styles.input}
+        />
 
         <TextInput
           placeholder="Email"
@@ -71,18 +110,21 @@ export default function SignUpScreen() {
           disabled={loading}
         >
           <Text style={styles.buttonText}>
-            {loading ? "Loading..." : "Créer un compte"}
+            {loading ? "Création..." : "S'inscrire"}
           </Text>
         </Pressable>
 
         <Pressable onPress={() => router.push("/login")}>
-          <Text style={styles.link}>Déjà un compte ? Login</Text>
+          <Text style={styles.link}>
+            Déjà un compte ? Se connecter
+          </Text>
         </Pressable>
       </View>
     </View>
   );
 }
 
+/* 🎨 STYLES */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -92,31 +134,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 
-  glowTop: {
-    position: "absolute",
-    top: -100,
-    left: -100,
-    width: 200,
-    height: 200,
-    backgroundColor: "#bfdbfe",
-    borderRadius: 100,
-    opacity: 0.4,
-  },
-
-  glowBottom: {
-    position: "absolute",
-    bottom: -100,
-    right: -100,
-    width: 200,
-    height: 200,
-    backgroundColor: "#a7f3d0",
-    borderRadius: 100,
-    opacity: 0.3,
-  },
-
   card: {
     width: "100%",
-    maxWidth: 350,
+    maxWidth: 360,
     padding: 20,
     borderRadius: 20,
     backgroundColor: "#fff",
@@ -127,10 +147,10 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "700",
-    marginBottom: 20,
     textAlign: "center",
+    marginBottom: 20,
   },
 
   input: {

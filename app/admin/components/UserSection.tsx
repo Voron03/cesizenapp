@@ -47,8 +47,8 @@ export default function UsersSection({
               </View>
 
               <View>
-                <Text style={styles.email}>{u.email}</Text>
-                <Text style={styles.id}>ID: {u.id}</Text>
+                <Text style={styles.id}>ID: {u.first_name} {u.last_name}</Text>
+
               </View>
             </View>
 
