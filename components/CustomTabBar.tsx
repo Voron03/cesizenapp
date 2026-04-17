@@ -11,21 +11,43 @@ export default function CustomTabBar() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const loadRole = async () => {
-      const { data: userData } = await supabase.auth.getUser();
+    const loadRole = async (user: any) => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
 
-      if (!userData.user) return;
-
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
         .select("role")
-        .eq("id", userData.user.id)
+        .eq("id", user.id)
         .single();
 
-      setIsAdmin(!!data?.role);
+      if (error) {
+        console.log("Role error:", error);
+        setIsAdmin(false);
+        return;
+      }
+
+      // 🔥 Явная проверка роли
+      setIsAdmin(data?.role === "admin");
     };
 
-    loadRole();
+    // 1. Проверяем текущего пользователя
+    supabase.auth.getUser().then(({ data }) => {
+      loadRole(data.user);
+    });
+
+    // 2. Слушаем изменения (логин / логаут)
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        loadRole(session?.user ?? null);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   return (
@@ -113,6 +135,7 @@ function Tab({
     </Pressable>
   );
 }
+
 const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: "#F6F7FB",
